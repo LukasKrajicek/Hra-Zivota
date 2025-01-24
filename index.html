@@ -3,192 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Game of Life</title>
-    <style>
-      /* Obecné styly */
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        background-color: #f0f8ff; /* Světle modrá barva pozadí pro světlý režim */
-        color: #333; /* Textová barva pro světlý režim */
-        transition: background-color 0.3s, color 0.3s;
-        padding: 10px;
-        height: 100vh;
-        box-sizing: border-box;
-      }
 
-      body.dark {
-        background-color: #1e1e1e; /* Tmavě šedá pro tmavý režim */
-        color: #ddd; /* Světle šedý text pro tmavý režim */
-      }
-
-      /* Responzivní styl pro mobilní zařízení */
-      @media (max-width: 768px) {
-        body {
-          font-size: 14px;
-        }
-
-        #gridContainer {
-          margin: 0 auto;
-        }
-
-        table {
-          width: 100%;
-          margin: 0 auto;
-        }
-
-        td {
-          width: 10vw;
-          height: 10vw;
-        }
-
-        .controls button {
-          padding: 8px 16px;
-          font-size: 14px;
-        }
-
-        .toggle-settings {
-          font-size: 14px;
-        }
-
-        .settings {
-          max-width: 100%;
-          padding: 10px;
-          font-size: 14px;
-        }
-      }
-
-      h1 {
-        margin-bottom: 20px;
-        font-size: 1.5rem;
-      }
-
-      #gridContainer {
-        display: inline-block;
-        margin-bottom: 20px;
-      }
-
-      table {
-        border-collapse: collapse;
-      }
-
-      td {
-        border: 1px solid #ccc;
-        background-color: #f4f4f4;
-        transition: background-color 0.3s;
-      }
-
-      td.live {
-        background-color: #4caf50; /* Zelená pro živé buňky */
-      }
-
-      td.dead {
-        background-color: #f4f4f4; /* Světle šedá pro mrtvé buňky */
-      }
-
-      body.dark td {
-        border-color: #555;
-      }
-
-      body.dark td.live {
-        background-color: #81c784; /* Světlejší zelená v tmavém režimu */
-      }
-
-      body.dark td.dead {
-        background-color: #333; /* Tmavě šedá pro mrtvé buňky */
-      }
-
-      /* Velikosti buněk */
-      table.small td {
-        width: 10px;
-        height: 10px;
-      }
-
-      table.medium td {
-        width: 20px;
-        height: 20px;
-      }
-
-      table.large td {
-        width: 30px;
-        height: 30px;
-      }
-
-      /* Nastavení */
-      .settings {
-        margin: 20px auto;
-        padding: 10px;
-        max-width: 300px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        display: none; /* Skrytí sekce nastavení */
-      }
-
-      body.dark .settings {
-        background-color: #2c2c2c;
-        border-color: #555;
-      }
-
-      .settings h2 {
-        margin-top: 0;
-      }
-
-      .settings label {
-        display: block;
-        margin: 10px 0;
-        text-align: left;
-      }
-
-      /* Ovládací tlačítka */
-      .controls {
-        margin: 20px 0;
-      }
-
-      .controls button {
-        margin: 0 5px;
-        padding: 12px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-      }
-
-      /* Barvy pro tlačítka */
-      #start {
-        background-color: #4caf50; /* Zelené tlačítko */
-        color: white;
-      }
-
-      #clear {
-        background-color: #f44336; /* Červené tlačítko */
-        color: white;
-      }
-
-      #random {
-        background-color: #ff9800; /* Oranžové tlačítko */
-        color: white;
-      }
-
-      /* Efekty při najetí myší */
-      .controls button:hover {
-        background-color: #ddd;
-        transform: scale(1.1);
-      }
-
-      /* Tlačítko pro rozbalení nastavení */
-      .toggle-settings {
-        color: #007bff;
-        cursor: pointer;
-        text-decoration: underline;
-      }
-
-      html {
-        scroll-behavior: smooth; /* Plynulý scroll */
-      }
-    </style>
   </head>
   <body>
     <h1>Game of Life</h1>
@@ -199,17 +16,15 @@
         <button id="start">Start</button>
         <button id="clear">Clear</button>
         <button id="random">Random</button>
+        <button id="undo">Go Back</button>
       </div>
       <div>
-        <p>Generation: <span id="generation">0</span></p>
-        <p>Number of cells: <span id="livingCells">0</span></p>
+        <p>Generation: <span id="generation">0</span> //  Number of cells: <span id="livingCells">0</span></p>
       </div>
     </div>
 
-    <!-- Tlačítko pro rozbalení nastavení -->
     <p class="toggle-settings" onclick="toggleSettings()">Show Settings</p>
 
-    <!-- Nastavení -->
     <div class="settings">
       <h2>Settings</h2>
       <div>
@@ -222,198 +37,20 @@
         <strong><p>Rules:</p></strong>
         <label><input type="checkbox" id="rule1" checked /> Rule 1: Alive cells with 2 or 3 neighbors survive</label>
         <label><input type="checkbox" id="rule2" checked /> Rule 2: Dead cells with 3 neighbors come to life</label>
+        <label><input type="checkbox" id="rule3" /> Rule 3: Dead cells with 6 neighbors come to life (Highlife)</label>
       </div>
       <div>
         <strong><p>Appearance:</p></strong>
         <label><input type="checkbox" id="darkMode" /> Enable Dark Mode</label>
       </div>
+      <div>
+        <strong><p>Cell Appearance:</p></strong>
+        <label for="cellColor">Live Cell Color:</label>
+        <input type="color" id="cellColor" value="#4caf50" />
+      </div>
     </div>
 
-    <script>
-      let rows = 15;
-      let cols = 15;
-      let playing = false;
-      let timer;
-      let reproductionTime = 500;
-      let grid = [];
-      let nextGrid = [];
-      let generation = 0;
+<script src="script.js"></script>
 
-      // Pravidla (defaultně zapnutá)
-      let rule1Enabled = true;
-      let rule2Enabled = true;
-
-      document.addEventListener("DOMContentLoaded", () => {
-        createTable();
-        initializeGrids();
-        resetGrids();
-        setupControlButtons();
-        setupSettings(); // Nastavení pro velikost buněk, pravidla a tmavý režim
-      });
-
-      function resetGrids() {
-        for (let i = 0; i < rows; i++) {
-          for (let j = 0; j < cols; j++) {
-            grid[i][j] = 0;
-            nextGrid[i][j] = 0;
-          }
-        }
-        generation = 0;
-        updateStatistics();
-        updateView();
-      }
-
-      function initializeGrids() {
-        grid = new Array(rows).fill(null).map(() => new Array(cols).fill(0));
-        nextGrid = new Array(rows).fill(null).map(() => new Array(cols).fill(0));
-      }
-
-      function createTable() {
-        let gridContainer = document.getElementById("gridContainer");
-        gridContainer.innerHTML = ""; // Clear previous grid
-        let table = document.createElement("table");
-        table.className = "large"; // Výchozí velikost buněk je "large"
-
-        for (let i = 0; i < rows; i++) {
-          let tr = document.createElement("tr");
-          for (let j = 0; j < cols; j++) {
-            let cell = document.createElement("td");
-            cell.setAttribute("id", `${i}_${j}`);
-            cell.setAttribute("class", "dead");
-            cell.onclick = cellClickHandler;
-            tr.appendChild(cell);
-          }
-          table.appendChild(tr);
-        }
-        gridContainer.appendChild(table);
-      }
-
-      function cellClickHandler() {
-        let [row, col] = this.id.split("_").map(Number);
-        grid[row][col] = grid[row][col] ? 0 : 1;
-        this.setAttribute("class", grid[row][col] ? "live" : "dead");
-        updateStatistics();
-      }
-
-      function setupControlButtons() {
-        document.querySelector("#start").onclick = () => {
-          playing = !playing;
-          document.querySelector("#start").textContent = playing ? "Pause" : "Start";
-          if (playing) play();
-        };
-
-        document.querySelector("#clear").onclick = () => {
-          playing = false;
-          document.querySelector("#start").textContent = "Start";
-          resetGrids();
-        };
-
-        document.querySelector("#random").onclick = () => {
-          for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-              grid[i][j] = Math.random() > 0.5 ? 1 : 0;
-            }
-          }
-          updateView();
-          updateStatistics();
-        };
-      }
-
-      function setupSettings() {
-        document.querySelectorAll('input[name="cellSize"]').forEach((radio) => {
-          radio.addEventListener("change", (event) => {
-            const size = event.target.value;
-            const gridContainer = document.querySelector("#gridContainer table");
-            gridContainer.className = size; // Nastav třídu podle velikosti
-          });
-        });
-
-        document.querySelector("#rule1").addEventListener("change", (event) => {
-          rule1Enabled = event.target.checked;
-        });
-
-        document.querySelector("#rule2").addEventListener("change", (event) => {
-          rule2Enabled = event.target.checked;
-        });
-
-        document.querySelector("#darkMode").addEventListener("change", (event) => {
-          document.body.classList.toggle("dark", event.target.checked);
-        });
-      }
-
-      function toggleSettings() {
-        const settingsSection = document.querySelector(".settings");
-        const settingsSectionVisible = settingsSection.style.display === "block";
-        
-        // Toggle visibility of the settings section
-        settingsSection.style.display = settingsSectionVisible ? "none" : "block";
-        
-        // If settings are visible, scroll smoothly to the settings section
-        if (!settingsSectionVisible) {
-          settingsSection.scrollIntoView({ behavior: "smooth" });
-        }
-      }
-
-      function play() {
-        if (!playing) return;
-        computeNextGen();
-        generation++;
-        updateStatistics();
-        timer = setTimeout(play, reproductionTime);
-      }
-
-      function computeNextGen() {
-        for (let i = 0; i < rows; i++) {
-          for (let j = 0; j < cols; j++) {
-            applyRules(i, j);
-          }
-        }
-        [grid, nextGrid] = [nextGrid, grid];
-        nextGrid = nextGrid.map((row) => row.fill(0));
-        updateView();
-      }
-
-      function applyRules(row, col) {
-        let neighbors = countNeighbors(row, col);
-        if (grid[row][col]) {
-          nextGrid[row][col] = rule1Enabled && (neighbors === 2 || neighbors === 3) ? 1 : 0;
-        } else {
-          nextGrid[row][col] = rule2Enabled && neighbors === 3 ? 1 : 0;
-        }
-      }
-
-      function countNeighbors(row, col) {
-        let directions = [
-          [-1, -1],
-          [-1, 0],
-          [-1, 1],
-          [0, -1],
-          [0, 1],
-          [1, -1],
-          [1, 0],
-          [1, 1],
-        ];
-        return directions.reduce((count, [dx, dy]) => {
-          let x = row + dx,
-            y = col + dy;
-          return count + (grid[x] && grid[x][y] ? 1 : 0);
-        }, 0);
-      }
-
-      function updateView() {
-        for (let i = 0; i < rows; i++) {
-          for (let j = 0; j < cols; j++) {
-            let cell = document.getElementById(`${i}_${j}`);
-            cell.setAttribute("class", grid[i][j] ? "live" : "dead");
-          }
-        }
-      }
-
-      function updateStatistics() {
-        let livingCells = grid.flat().filter((cell) => cell === 1).length;
-        document.querySelector("#generation").textContent = generation;
-        document.querySelector("#livingCells").textContent = livingCells;
-      }
-    </script>
   </body>
 </html>
